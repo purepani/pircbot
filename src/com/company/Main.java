@@ -11,7 +11,8 @@ public class Main {
 
         bot.setVerbose(true);
         bot.connect("irc.twitch.tv", 6667, pass);
-        bot.joinChannel("#satwikp");
+        bot.joinChannel("#eddiethekid11 ");
+        System.out.println(bot.ops());
 
 
     }

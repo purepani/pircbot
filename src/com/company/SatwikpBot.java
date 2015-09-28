@@ -18,14 +18,12 @@ public class SatwikpBot extends PircBot{
     ArrayList<Tuple<String, String>> ops;
 
 
-
-
     public SatwikpBot(){
-        this.ops = new ArrayList<>();
+        ops = new ArrayList<>();
+
         this.setName("satwikpbot");
         this.onServerPing("tmi.twitch.tv");
     }
-
 
 
     public void onMessage(String channel, String sender,
@@ -52,19 +50,46 @@ public class SatwikpBot extends PircBot{
         }
     }
 
+    protected void onUserMode(String targetnick, String sourcenick, String sourcelogin, String sourcehostname, String mode){
+
+
+        String channel = mode.substring(mode.indexOf("#"));
+        channel = channel.substring(0, channel.indexOf(" "));
+
+        if (mode.contains("+o")) {
+            String realUser = mode.substring(mode.indexOf("+o") + 3);
+
+            Tuple mods = new Tuple<>(channel, realUser);
+
+            ops.add(mods);
+            System.out.println(mods.showA() + " " + mods.showB());
+            System.out.println(ops.indexOf(mods));
+
+
+        } else if(mode.contains("-o")){
+            String realUser = mode.substring(mode.indexOf("+o") + 3);
+
+            Tuple mods = new Tuple(channel, realUser);
+
+            ops.add(mods);
+
+        }
+
+    }
+
     private boolean isOp(String channel, String user){
 
-        User [] users = getUsers(channel);
+        User[] users = getUsers(channel);
+
+        Tuple mods = new Tuple<>(channel, user);
+
+        System.out.println(mods.showA() + " " + mods.showB());
+        System.out.println(ops.indexOf(mods));
+
         for(User us : users){
            String name = us.getNick();
 
-
-            Tuple mods = new Tuple<>(channel, user);
-
-            System.out.println(mods.showA() + " " + mods.showB());
-            System.out.println(this.ops.indexOf(mods));
-
-            if(name.equalsIgnoreCase(user) && this.ops.contains(mods)){
+            if(name.equalsIgnoreCase(user) && ops.contains(mods)){
                 return true;
 
             }
@@ -73,28 +98,10 @@ public class SatwikpBot extends PircBot{
         return false;
     }
 
-    protected void onUserMode(String targetnick, String sourcenick, String sourcelogin, String sourcehostname, String mode){
-
-
-            String channel = mode.substring(mode.indexOf("#"));
-            channel = channel.substring(0, channel.indexOf(" "));
-
-            if (mode.contains("+o")) {
-                String realUser = mode.substring(mode.indexOf("+o") + 3);
-
-                Tuple mods = new Tuple<>(channel, realUser);
-
-               this.ops.add(mods);
-
-                System.out.println(mods.showA() + " " + mods.showB());
-                System.out.println(this.ops.indexOf(mods));
-
-
-            } else if (mode.contains("-o")) {
-                String realUser = mode.substring(mode.indexOf("-o") + 3);
-                this.ops.remove(new Tuple<>(channel, realUser));
-            }
-
+    public String ops(){
+        return (ops.get(0).showA() + " " + ops.get(0).showB());
     }
+
+
 
 }
